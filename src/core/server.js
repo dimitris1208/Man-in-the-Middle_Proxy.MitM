@@ -1,5 +1,6 @@
 const net = require('net');
 const { parseRequestDetails } = require('../modules/parser');
+const { createTunnel } = require('./tunnel');
 
 // This function acts as the factory for the server instance 
 function createServer() {
@@ -30,8 +31,14 @@ function createServer() {
 
             console.log(`Routing to ${destination.hostname}:${destination.port} (HTTPS: ${destination.isConnect})`);
 
-            // TODO: Implement Tunnel here
-            clientSocket.end(); // Placeholder to close the connection
+            // Establish the tunnel
+            // We pass:
+            // The users socker
+            // The target website details (host, port)
+            // The first packet we already received
+            createTunnel(clientSocket, destination, data);
+        
+
         });
     });
 
