@@ -1,4 +1,5 @@
 const net = require('net');
+const { Interceptor } = require('../modules/interceptor');
 /**
  * Establishes the connection between the User and the website 
  * @param {net.Socket} clientSocket - The socket connected to the user
@@ -19,11 +20,23 @@ function createTunnel(clientSocket, destination, initialData) {
         // We need to write the data to the server manually
         serverSocket.write(initialData);
 
-        // The PIPELINE 
+        // -- New Workflow --
+
+        // Create 2 interceptors (for both directions)
+        const uploadInterceptor = new Interceptor();   // User -> Website
+        const downloadInterceptor = new Interceptor(); // Website -> User
+
+        // Wire: Client -> UploadInterceptor -> Server
+        clientSocket.pipe(uploadInterceptor).pipe(serverSocket);
+
+        // Wire: Server -> DownloadInterceptor -> Client
+        serverSocket.pipe(downloadInterceptor).pipe(clientSocket);
+
+        // The OLD PIPELINE (Replaced by Interceptors)
         // "Whatever comes from the user, send it to the website"
         // "Whatever comes from the website, send it to the user"
-        clientSocket.pipe(serverSocket);
-        serverSocket.pipe(clientSocket);
+        // clientSocket.pipe(serverSocket);
+        // serverSocket.pipe(clientSocket);
 
         // Resume the client stream (we paused it earlier)
         clientSocket.resume();
