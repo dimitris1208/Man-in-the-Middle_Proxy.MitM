@@ -11,8 +11,8 @@ function createTunnel(clientSocket, destination, initialData) {
     const serverSocket = new net.Socket();
 
     // Connect to the target website
-    serverSocket.connect(destination.port, destination.host, () => {
-        console.log(`Tunnel established to ${destination.host}:${destination.port}`);
+    serverSocket.connect(destination.port, destination.hostname, () => {
+        console.log(`Tunnel established to ${destination.hostname}:${destination.port}`);
 
         // Replay the first packet 
         // We already read the first packet (to find the hostname)
@@ -33,7 +33,7 @@ function createTunnel(clientSocket, destination, initialData) {
     // If one side hangs up , we must close the other side too
 
     serverSocket.on('error', (err) => {
-        console.error(`Target Connection Error (${destination.host}): ${err.message}`);
+        console.error(`Target Connection Error (${destination.hostname}): ${err.message}`);
         clientSocket.end();
     });
 
