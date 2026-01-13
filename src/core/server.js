@@ -1,6 +1,6 @@
 const net = require('net');
 const { parseRequestDetails } = require('../modules/parser');
-const { createTunnel } = require('./tunnel');
+const { createTunnel } = require('./tunnel-v2');
 
 // This function acts as the factory for the server instance 
 function createServer() {
